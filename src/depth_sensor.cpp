@@ -1,41 +1,34 @@
 #include "depth_sensor.h"
 
-SoftwareSerial sensorSerial(13, 15); // RX, TX
-unsigned char data[4] = {};
-float distance;
+DepthSensor::DepthSensor(int receivePin, int transmitPin)
+    : sensorSerial(receivePin, transmitPin) {}
 
-void initDepthSerial() {
-  Serial.begin(9600);
+bool DepthSensor::init() {
   sensorSerial.begin(9600);
-  Serial.setDebugOutput(true);
-  Serial.println("Serial successfully inited.");
+  return true;
 }
 
-void readFromSerial() {
+float DepthSensor::readDistance() {
   do {
     for (int i = 0; i < 4; i++) {
       data[i] = sensorSerial.read();
     }
   } while (sensorSerial.read() == 0xff);
-
   sensorSerial.flush();
 
   if (data[0] == 0xff) {
     int sum;
     sum = (data[0] + data[1] + data[2]) & 0x00FF;
     if (sum == data[3]) {
-      distance = (data[1] << 8) + data[2];
+      float distance = (data[1] << 8) + data[2];
       if (distance > 30) {
-        Serial.print("distance=");
-        Serial.print(distance / 10);
-        Serial.println("cm");
-      } else
-
-      {
-        Serial.println("Below the lower limit");
+        Serial.println("Distance sensor too close to target.");
       }
-    } else
-      Serial.println("ERROR");
+      return distance;
+    }
   }
-  delay(100);
+
+  Serial.println("Error reading distance. Retrying in 1 second...");
+  delay(1000);
+  return readDistance();
 }
