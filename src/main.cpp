@@ -5,6 +5,7 @@ char *ssid;
 char *pass;
 IOTHUB_CLIENT_LL_HANDLE handle;
 int messageCount = 1;
+float depth;
 
 void initWifi() {
   Serial.printf("Attempting to connect to WiFi network %s...\n", ssid);
@@ -67,8 +68,8 @@ void setup() {
 }
 
 void loop() {
-  depthSensor.readDistance();
-  Serial.printf("Distance: %fmm\n", distance);
+  depth = depthSensor.readDepth();
+  Serial.printf("Distance: %fmm\n", depth);
   if (!messagePending && messageSending) {
     char messagePayload[MESSAGE_MAX_LEN];
     bool temperatureAlert = readMessage(messageCount, messagePayload);
