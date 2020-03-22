@@ -3,27 +3,29 @@
 DepthSensor::DepthSensor(int receivePin, int transmitPin)
     : rx(receivePin), tx(transmitPin), sensorSerial(receivePin, transmitPin) {}
 
-void DepthSensor::init() {
-  digitalWrite(rx, HIGH); // Use processed readings
-  sensorSerial.begin(9600);
+void DepthSensor::init(bool useProcessedReadings) {
+  useProcessedReadings ? digitalWrite(rx, HIGH) : digitalWrite(rx, LOW);
+  sensorSerial.begin(BAUD_RATE);
+  while (!sensorSerial) {
+  }
 }
 
-float DepthSensor::readDepth() {
-  // Load data from serial
-  do {
-    for (int i = 0; i < 4; i++) {
-      data[i] = sensorSerial.read();
-    }
-  } while (sensorSerial.available() < 4 && sensorSerial.read() == HEADER);
+int DepthSensor::read() {
   sensorSerial.flush();
-
-  if (data[0] == HEADER) {
-    int sum;
-    sum = (data[0] + data[1] + data[2]) & 0x00FF;
-    if (sum == data[3]) { // data[3] is the checksum
-      depth = (data[1] << 8) + data[2];
-      return depth;
-    } else
-      return -1;
+  // Wait for data from serial
+  while (true) {
+    if (sensorSerial.available() >= 4 && sensorSerial.read() == HEADER) {
+      data[0] = HEADER;
+      for (int i = 1; i < 4; i++) {
+        data[i] = sensorSerial.read();
+      }
+      break;
+    }
   }
+  // data[3] is the checksum
+  if (data[3] == ((data[0] + data[1] + data[2]) & 0x00FF)) {
+    depth = (data[1] << 8) + data[2];
+    return depth;
+  }
+  return -1;
 }

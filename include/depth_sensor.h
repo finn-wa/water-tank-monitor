@@ -1,30 +1,47 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-// DFRobot A02YYUW
-// https://wiki.dfrobot.com/A02YYUW%20Waterproof%20Ultrasonic%20Sensor%20SKU:%20SEN0311
-
+/**
+ * @brief Class for interacting with the depth sensor. Designed for use with a
+ * DFRobot A02YYUW (see documentation:
+ * https://wiki.dfrobot.com/A02YYUW%20Waterproof%20Ultrasonic%20Sensor%20SKU:%20SEN0311)
+ *
+ */
 class DepthSensor {
+  // Constants
+  const int HEADER = 0xff;
+  const int BAUD_RATE = 9600;
+  // Serial
   int rx;
   int tx;
   SoftwareSerial sensorSerial;
-  const int HEADER = 0xff;
+  // Data
   float depth;
   unsigned char data[4] = {};
 
 public:
   /**
-   * Creates the DepthSensor object with the supplied RX & TX pins
+   * @brief Construct a new Depth Sensor object
+   *
+   * @param receivePin RX pin for the SoftwareSerial
+   * @param transmitPin TX pin for the SoftwareSerial
    */
-  DepthSensor(int, int);
+  DepthSensor(int receivePin, int transmitPin);
 
   /**
-   * Initialises the DepthSensor.
+   * @brief Initialises the DepthSensor.
+   *
+   * @param useProcessedReadings When set to true, readings take 100-300ms and
+   * processes each value properly. When set to false, sensor consistently
+   * outputs readings every 100ms they may be less reliable.
    */
-  void init();
+  void init(bool useProcessedReadings);
 
   /**
-   * Returns depth sensor reading in millimetres.
+   * @brief Reads from the depth sensor. Returns the distance to the closest
+   * object.
+   *
+   * @return int The depth sensor reading in millimetres.
    */
-  float readDepth();
+  int read();
 };

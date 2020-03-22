@@ -5,7 +5,7 @@ char *ssid;
 char *pass;
 IOTHUB_CLIENT_LL_HANDLE handle;
 int messageCount = 1;
-float depth;
+int depth;
 
 void initWifi() {
   Serial.printf("Attempting to connect to WiFi network %s...\n", ssid);
@@ -15,10 +15,8 @@ void initWifi() {
     uint8_t mac[6];
     WiFi.macAddress(mac);
     Serial.printf("Device with MAC address %02x:%02x:%02x:%02x:%02x:%02x "
-                  "failed to connect to %s! Waiting 10 seconds to
-                  retry...\n ", mac[0], mac[1], mac[2], mac[3], mac[4],
-                  mac[5],
-                  ssid);
+                  "failed to connect to %s! Waiting 10 seconds to retry...\n",
+                  mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], ssid);
     WiFi.begin(ssid, pass);
     delay(10000);
   }
@@ -43,7 +41,7 @@ DepthSensor depthSensor(13, 15);
 
 void setup() {
   initSerial();
-  depthSensor.init();
+  depthSensor.init(true);
 
   pinMode(LED_PIN, OUTPUT);
   delay(2000);
@@ -68,8 +66,14 @@ void setup() {
 }
 
 void loop() {
-  depth = depthSensor.readDepth();
-  Serial.printf("Distance: %fmm\n", depth);
+  depth = depthSensor.read();
+  if (depth == -1) {
+    Serial.println("Error reading from depth sensor.");
+  } else if (depth > 30) {
+    Serial.printf("Distance: %dmm\n", depth);
+  } else {
+    Serial.println("Object too close to depth sensor.");
+  }
   if (!messagePending && messageSending) {
     char messagePayload[MESSAGE_MAX_LEN];
     bool temperatureAlert = readMessage(messageCount, messagePayload);
