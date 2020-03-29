@@ -4,7 +4,13 @@ char *connectionString;
 char *ssid;
 char *pass;
 IOTHUB_CLIENT_LL_HANDLE handle;
+
 int messageCount = 1;
+extern bool messagePending;
+extern bool messageSending;
+unsigned long interval = INTERVAL;
+
+DepthSensor depthSensor(13, 15);
 int depth;
 
 void initWifi() {
@@ -37,11 +43,9 @@ void initTime() {
   Serial.printf("Fetched NTP epoch time: %lu.\n", epochTime);
 }
 
-DepthSensor depthSensor(13, 15);
-
 void setup() {
   initSerial();
-  depthSensor.init(true);
+  depthSensor.init(USE_PROCESSED_READINGS);
 
   pinMode(LED_PIN, OUTPUT);
   delay(2000);
@@ -49,7 +53,6 @@ void setup() {
   readCredentials();
   initWifi();
   initTime();
-  initSensor();
 
   Serial.println("Setting up Azure...");
   handle = IoTHubClient_LL_CreateFromConnectionString(connectionString,
@@ -59,9 +62,6 @@ void setup() {
     while (1)
       ;
   }
-  IoTHubClient_LL_SetMessageCallback(handle, receiveMessageCallback, NULL);
-  IoTHubClient_LL_SetDeviceMethodCallback(handle, deviceMethodCallback, NULL);
-  IoTHubClient_LL_SetDeviceTwinCallback(handle, twinCallback, NULL);
   Serial.println("Finished setup.");
 }
 
@@ -76,11 +76,10 @@ void loop() {
   }
   if (!messagePending && messageSending) {
     char messagePayload[MESSAGE_MAX_LEN];
-    bool temperatureAlert = readMessage(messageCount, messagePayload);
-    sendMessage(handle, messagePayload, temperatureAlert);
+    createJson(messageCount, depth, messagePayload);
+    sendMessage(handle, messagePayload);
     messageCount++;
-    delay(interval);
   }
   IoTHubClient_LL_DoWork(handle);
-  delay(10);
+  delay(interval);
 }
