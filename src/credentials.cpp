@@ -6,6 +6,10 @@ char *pass;
 
 const int8_t EEPROM_END = 0;
 const int8_t EEPROM_START = 1;
+const int16_t EEPROM_SIZE = 512;
+const int8_t SSID_LEN = 32;
+const int8_t PASS_LEN = 32;
+const int16_t CONNECTION_STRING_LEN = 256;
 
 void EEPROMWrite(int addr, char *data, int size) {
   EEPROM.begin(EEPROM_SIZE);
@@ -50,9 +54,10 @@ void clearParam() {
 
 bool needEraseEEPROM() {
   char result = 'n';
-  readFromSerial("Do you need re-input your credential information?(Auto skip "
-                 "this after 5 seconds)[Y/n]",
-                 &result, 1, 5000);
+  readFromSerial(
+      (char *)"Do you need to re-input your credential information? (Auto skip "
+              "this after 5 seconds) [Y/n]",
+      &result, 1, 5000);
   if (result == 'Y' || result == 'y') {
     clearParam();
     return true;
@@ -84,13 +89,13 @@ void readCredentials() {
   }
 
   // read from Serial and save to EEPROM
-  readFromSerial("Input your Wi-Fi SSID: ", ssid, SSID_LEN, 0);
+  readFromSerial((char *)"Input your Wi-Fi SSID: ", ssid, SSID_LEN, 0);
   EEPROMWrite(ssidAddr, ssid, strlen(ssid));
 
-  readFromSerial("Input your Wi-Fi password: ", pass, PASS_LEN, 0);
+  readFromSerial((char *)"Input your Wi-Fi password: ", pass, PASS_LEN, 0);
   EEPROMWrite(passAddr, pass, strlen(pass));
 
-  readFromSerial("Input your Azure IoT hub device connection string: ",
+  readFromSerial((char *)"Input your Azure IoT hub device connection string: ",
                  connectionString, CONNECTION_STRING_LEN, 0);
   EEPROMWrite(connectionStringAddr, connectionString, strlen(connectionString));
 }

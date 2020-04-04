@@ -1,19 +1,13 @@
 #include "iot_hub_client.h"
 
-WiFiClientSecure sslClient; // for ESP8266
-
-const char *onSuccess = "\"Successfully invoke device method\"";
-const char *notFound = "\"No method found\"";
+const int16_t MESSAGE_MAX_LEN = 256;
 bool messagePending = false;
+WiFiClientSecure sslClient; // for ESP8266
 
 void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result,
                   void *userContextCallback) {
   if (IOTHUB_CLIENT_CONFIRMATION_OK == result) {
     Serial.println("Message sent to Azure IoT Hub");
-    // Blink LED
-    digitalWrite(LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(LED_PIN, LOW);
   } else {
     Serial.println("Failed to send message to Azure IoT Hub");
   }
@@ -39,10 +33,10 @@ void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, char *payload) {
   }
 }
 
-void createJson(int messageId, int depth, char *payload) {
+void createJson(int depth, int messageId, const char *deviceId, char *payload) {
   StaticJsonBuffer<MESSAGE_MAX_LEN> jsonBuffer;
   JsonObject &json = jsonBuffer.createObject();
-  json["deviceId"] = DEVICE_ID;
+  json["deviceId"] = deviceId;
   json["messageCount"] = messageId;
   if (std::isnan(depth)) {
     json["depth"] = NULL;

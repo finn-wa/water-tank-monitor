@@ -19,7 +19,7 @@ void initWifi() {
                   "failed to connect to %s! Waiting 10 seconds to retry...\n",
                   mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], ssid);
     WiFi.begin(ssid, pass);
-    delay(10000);
+    delay(10 * SECOND);
   }
   Serial.printf("Connected to WiFi network %s.\n", ssid);
 }
@@ -32,7 +32,7 @@ void initTime() {
     if (epochTime == 0) {
       Serial.println(
           "Failed to fetch NTP epoch time! Waiting 2 seconds to retry...");
-      delay(2000);
+      delay(2 * SECOND);
     }
   }
   Serial.printf("Fetched NTP epoch time: %lu.\n", epochTime);
@@ -72,7 +72,7 @@ void loop() {
       Serial.println("Object too close to depth sensor.");
     }
     char messagePayload[MESSAGE_MAX_LEN];
-    createJson(messageCount, depth, messagePayload);
+    createJson(depth, messageCount, DEVICE_ID, messagePayload);
     sendMessage(handle, messagePayload);
     messageCount++;
   }

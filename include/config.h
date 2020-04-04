@@ -1,27 +1,17 @@
-// Physical device information for board and sensor
-#define DEVICE_ID "FeatherHuzzah1"
-#define DHT_TYPE DHT22
-
-// Configuration for depth sensor
-#define USE_PROCESSED_READINGS 1
-
-// Pin layout configuration
-#define LED_PIN 0
-#define DHT_PIN 2
+const unsigned long SECOND = 1000UL;
+const unsigned long MINUTE = 60UL * SECOND;
+const unsigned long HOUR = 60UL * MINUTE;
 
 // Interval time(ms) for sending message to IoT Hub
-#define SECOND 1000UL
-#define MINUTE 60000UL
-#define HOUR 3600000UL
-#define INTERVAL 10000
+const unsigned long INTERVAL = 30UL * SECOND;
 
-// EEPROM address configuration
-#define EEPROM_SIZE 512
+// Physical device information for board and sensor
+const char *DEVICE_ID = "FeatherHuzzah1";
 
-// SSID and SSID password's length should < 32 bytes
-// http://serverfault.com/a/45509
-#define SSID_LEN 32
-#define PASS_LEN 32
-#define CONNECTION_STRING_LEN 256
+// Configuration for depth sensor
+const bool USE_PROCESSED_READINGS = true;
 
-#define MESSAGE_MAX_LEN 256
+// Pin layout configuration
+const int8_t LED_PIN = 0;
+const int8_t RX_PIN = 13;
+const int8_t TX_PIN = 15;

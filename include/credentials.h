@@ -1,7 +1,6 @@
 #include <EEPROM.h>
 #include <stdlib.h>
 
-#include "config.h"
 #include "serial_reader.h"
 
 extern char *connectionString;
