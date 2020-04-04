@@ -26,7 +26,7 @@ bool readFromSerial(char *prompt, char *buf, int maxLen, int timeout) {
   }
 
   Serial.println(prompt);
-  while (1) {
+  while (true) {
     input = Serial.readString();
     int len = input.length();
     if (len > maxLen) {

@@ -6,8 +6,8 @@ DepthSensor::DepthSensor(int receivePin, int transmitPin)
 void DepthSensor::init(bool useProcessedReadings) {
   useProcessedReadings ? digitalWrite(rx, HIGH) : digitalWrite(rx, LOW);
   sensorSerial.begin(BAUD_RATE);
-  while (!sensorSerial) {
-  }
+  while (!sensorSerial)
+    ;
 }
 
 int DepthSensor::read() {

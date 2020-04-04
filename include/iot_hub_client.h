@@ -6,6 +6,8 @@
 #include <AzureIoTUtility.h>
 #include <WiFiClientSecure.h>
 
+extern bool messagePending;
+
 void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, char *payload);
 
 void createJson(int messageId, int depth, char *payload);

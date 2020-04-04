@@ -10,6 +10,9 @@
 #define DHT_PIN 2
 
 // Interval time(ms) for sending message to IoT Hub
+#define SECOND 1000UL
+#define MINUTE 60000UL
+#define HOUR 3600000UL
 #define INTERVAL 10000
 
 // EEPROM address configuration

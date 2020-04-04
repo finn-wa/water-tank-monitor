@@ -5,7 +5,6 @@ WiFiClientSecure sslClient; // for ESP8266
 const char *onSuccess = "\"Successfully invoke device method\"";
 const char *notFound = "\"No method found\"";
 bool messagePending = false;
-bool messageSending = true;
 
 void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result,
                   void *userContextCallback) {

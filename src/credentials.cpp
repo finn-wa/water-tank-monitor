@@ -1,7 +1,12 @@
 #include "credentials.h"
 
-#define EEPROM_END 0
-#define EEPROM_START 1
+char *connectionString;
+char *ssid;
+char *pass;
+
+const int8_t EEPROM_END = 0;
+const int8_t EEPROM_START = 1;
+
 void EEPROMWrite(int addr, char *data, int size) {
   EEPROM.begin(EEPROM_SIZE);
   // write the start marker

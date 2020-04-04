@@ -1,14 +1,9 @@
 #include "main.h"
 
-char *connectionString;
-char *ssid;
-char *pass;
 IOTHUB_CLIENT_LL_HANDLE handle;
-
+unsigned long previousMillis = 0;
+bool sendNextMessage = true;
 int messageCount = 1;
-extern bool messagePending;
-extern bool messageSending;
-unsigned long interval = INTERVAL;
 
 DepthSensor depthSensor(13, 15);
 int depth;
@@ -59,27 +54,34 @@ void setup() {
                                                       MQTT_Protocol);
   if (handle == NULL) {
     Serial.println("Failed on IoTHubClient_CreateFromConnectionString.");
-    while (1)
+    while (true)
       ;
   }
   Serial.println("Finished setup.");
 }
 
 void loop() {
-  depth = depthSensor.read();
-  if (depth == -1) {
-    Serial.println("Error reading from depth sensor.");
-  } else if (depth > 30) {
-    Serial.printf("Distance: %dmm\n", depth);
-  } else {
-    Serial.println("Object too close to depth sensor.");
-  }
-  if (!messagePending && messageSending) {
+  if (sendNextMessage && !messagePending) {
+    sendNextMessage = false;
+    depth = depthSensor.read();
+    if (depth == -1) {
+      Serial.println("Error reading from depth sensor.");
+    } else if (depth > 30) {
+      Serial.printf("Distance: %dmm\n", depth);
+    } else {
+      Serial.println("Object too close to depth sensor.");
+    }
     char messagePayload[MESSAGE_MAX_LEN];
     createJson(messageCount, depth, messagePayload);
     sendMessage(handle, messagePayload);
     messageCount++;
   }
-  IoTHubClient_LL_DoWork(handle);
-  delay(interval);
+  // Check if interval is over
+  if (millis() - previousMillis >= INTERVAL) {
+    previousMillis = millis();
+    sendNextMessage = true;
+  } else {
+    IoTHubClient_LL_DoWork(handle);
+    delay(2 * SECOND);
+  }
 }
