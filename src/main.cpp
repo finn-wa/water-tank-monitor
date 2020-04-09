@@ -1,12 +1,14 @@
 #include "main.h"
 
-IOTHUB_CLIENT_LL_HANDLE handle;
 unsigned long previousMillis = 0;
 bool sendNextMessage = true;
 int messageCount = 1;
 
 DepthSensor depthSensor(13, 15);
 int depth;
+
+#if UPLOAD
+IOTHUB_CLIENT_LL_HANDLE handle;
 
 void initWifi() {
   Serial.printf("Attempting to connect to WiFi network %s...\n", ssid);
@@ -38,13 +40,15 @@ void initTime() {
   Serial.printf("Fetched NTP epoch time: %lu.\n", epochTime);
 }
 
+#endif
+
 void setup() {
-  initSerial();
   depthSensor.init(USE_PROCESSED_READINGS);
-
   pinMode(LED_PIN, OUTPUT);
-  delay(2000);
+  initSerial();
+  // delay(2000);
 
+#if UPLOAD
   readCredentials();
   initWifi();
   initTime();
@@ -57,31 +61,40 @@ void setup() {
     while (true)
       ;
   }
+#endif
   Serial.println("Finished setup.");
 }
 
 void loop() {
-  if (sendNextMessage && !messagePending) {
-    sendNextMessage = false;
-    depth = depthSensor.read();
-    if (depth == -1) {
-      Serial.println("Error reading from depth sensor.");
-    } else if (depth > 30) {
-      Serial.printf("Distance: %dmm\n", depth);
-    } else {
-      Serial.println("Object too close to depth sensor.");
+  if (sendNextMessage) {
+#if UPLOAD
+    if (!messagePending) {
+#endif
+      sendNextMessage = false;
+      depth = depthSensor.read();
+      if (depth == -1) {
+        Serial.println("Error reading from depth sensor.");
+      } else if (depth > 30) {
+        Serial.printf("Distance: %dmm\n", depth);
+      } else {
+        Serial.println("Object too close to depth sensor.");
+      }
+#if UPLOAD
+      char messagePayload[MESSAGE_MAX_LEN];
+      createJson(depth, messageCount, DEVICE_ID, messagePayload);
+      sendMessage(handle, messagePayload);
+      messageCount++;
     }
-    char messagePayload[MESSAGE_MAX_LEN];
-    createJson(depth, messageCount, DEVICE_ID, messagePayload);
-    sendMessage(handle, messagePayload);
-    messageCount++;
+#endif
   }
   // Check if interval is over
   if (millis() - previousMillis >= INTERVAL) {
     previousMillis = millis();
     sendNextMessage = true;
   } else {
+#if UPLOAD
     IoTHubClient_LL_DoWork(handle);
-    delay(2 * SECOND);
+#endif
+    delay(SECOND);
   }
 }
