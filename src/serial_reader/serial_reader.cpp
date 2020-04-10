@@ -1,4 +1,4 @@
-#include "serial_reader.h"
+#include "serial_reader/serial_reader.h"
 
 void initSerial() {
   // Start serial and initialize stdout

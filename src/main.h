@@ -2,8 +2,8 @@
 #include <SoftwareSerial.h>
 
 #include "config.h"
-#include "depth_sensor.h"
-#include "serial_reader.h"
+#include "depth_sensor/depth_sensor.h"
+#include "serial_reader/serial_reader.h"
 
 #if UPLOAD
 #include <AzureIoTHub.h>
@@ -11,6 +11,6 @@
 #include <AzureIoTUtility.h>
 #include <ESP8266WiFi.h>
 
-#include "credentials.h"
-#include "iot_hub_client.h"
+#include "credentials/credentials.h"
+#include "iot/iot_hub_client.h"
 #endif

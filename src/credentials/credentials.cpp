@@ -1,4 +1,4 @@
-#include "credentials.h"
+#include "credentials/credentials.h"
 
 char *connectionString;
 char *ssid;

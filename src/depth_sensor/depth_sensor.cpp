@@ -1,4 +1,4 @@
-#include "depth_sensor.h"
+#include "depth_sensor/depth_sensor.h"
 
 DepthSensor::DepthSensor(int receivePin, int transmitPin)
     : rx(receivePin), tx(transmitPin), sensorSerial(receivePin, transmitPin) {}

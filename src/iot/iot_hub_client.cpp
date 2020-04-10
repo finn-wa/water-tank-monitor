@@ -1,4 +1,4 @@
-#include "iot_hub_client.h"
+#include "iot/iot_hub_client.h"
 
 const int16_t MESSAGE_MAX_LEN = 256;
 bool messagePending = false;
