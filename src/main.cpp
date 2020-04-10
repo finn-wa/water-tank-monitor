@@ -71,7 +71,7 @@ void loop() {
     if (!messagePending) {
 #endif
       sendNextMessage = false;
-      depth = depthSensor.read();
+      depth = depthSensor.readMedian(NUM_READINGS);
       if (depth == -1) {
         Serial.println("Error reading from depth sensor.");
       } else if (depth > 30) {

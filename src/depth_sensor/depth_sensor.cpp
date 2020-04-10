@@ -29,3 +29,20 @@ int DepthSensor::read() {
   }
   return -1;
 }
+
+int DepthSensor::readMedian(size_t numReadings) {
+  // Handle even numbers by sneakily making them odd numbers
+  if (numReadings % 2 == 0) {
+    numReadings++;
+  }
+  std::vector<int> depths(numReadings);
+  for (int i = 0; i < numReadings; i++) {
+    depths[i] = read();
+    Serial.printf("%d, ", depths[i]);
+  }
+  Serial.println();
+  // Sort to find median element
+  size_t n = numReadings / 2;
+  std::nth_element(depths.begin(), depths.begin() + n, depths.end());
+  return depths[n];
+}

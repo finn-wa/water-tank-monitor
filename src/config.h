@@ -10,6 +10,7 @@ const char *DEVICE_ID = "FeatherHuzzah1";
 
 // Configuration for depth sensor
 const bool USE_PROCESSED_READINGS = true;
+const size_t NUM_READINGS = 9;
 
 // Pin layout configuration
 const int8_t LED_PIN = 0;

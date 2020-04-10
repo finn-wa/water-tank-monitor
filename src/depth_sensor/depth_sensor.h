@@ -44,4 +44,13 @@ public:
    * @return int The depth sensor reading in millimetres.
    */
   int read();
+
+  /**
+   * @brief Reads from the depth sensor as many times as specified. Returns the
+   * median reading.
+   * @param numReadings The number of times to read from the sensor. If set to
+   * an even number, it will be incremented so it is odd.
+   * @return int The median depth sensor reading in millimetres.
+   */
+  int readMedian(size_t numReadings);
 };
