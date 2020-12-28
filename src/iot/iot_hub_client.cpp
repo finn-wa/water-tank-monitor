@@ -33,11 +33,13 @@ void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, char *payload) {
   }
 }
 
-void createJson(int depth, int messageId, const char *deviceId, char *payload) {
+void createJson(int depth, int messageCount, const char *deviceID,
+                const char *customerID, char *payload) {
   StaticJsonBuffer<MESSAGE_MAX_LEN> jsonBuffer;
   JsonObject &json = jsonBuffer.createObject();
-  json["deviceId"] = deviceId;
-  json["messageCount"] = messageId;
+  json["deviceID"] = deviceID;
+  json["customerID"] = customerID;
+  json["messageCount"] = messageCount;
   if (std::isnan(depth)) {
     json["depth"] = NULL;
   } else {

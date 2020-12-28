@@ -81,7 +81,7 @@ void loop() {
       }
 #if UPLOAD
       char messagePayload[MESSAGE_MAX_LEN];
-      createJson(depth, messageCount, DEVICE_ID, messagePayload);
+      createJson(depth, messageCount, DEVICE_ID, CUSTOMER_ID, messagePayload);
       sendMessage(handle, messagePayload);
       messageCount++;
     }

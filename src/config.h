@@ -6,6 +6,7 @@ const unsigned long HOUR = 60UL * MINUTE;
 const unsigned long INTERVAL = 30UL * SECOND;
 
 // Physical device information for board and sensor
+const char *CUSTOMER_ID = "WA";
 const char *DEVICE_ID = "FeatherHuzzah1";
 
 // Configuration for depth sensor
